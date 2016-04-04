@@ -1,20 +1,19 @@
 #-*- coding:utf-8 -*-
+
 import tornado.ioloop
 import tornado.web
 from tornado.options import define, options
 import os
-import wechatgw.handler
+#import wechatgw.basehandler
 import globalsetting
-
+import basehandler
+import oam.handler
 define("debug", default=False, help="run in debug mode")
 define("port", default=8888, help="run on the given port", type=int)
 
 # bootstrap http://www.runoob.com/bootstrap/bootstrap-environment-setup.html
 
-class MainHandler(tornado.web.RequestHandler):
-    def get(self):
-        #self.write(vars(self.request.headers))
-        self.render("login.htm");
+
 def main():
     options.parse_command_line()
     d = options.debug
@@ -25,12 +24,13 @@ def main():
  
     app = tornado.web.Application(
         [
-            (r"/", MainHandler),
-            (r"/([^/]+)/apiwechat[^/]*$", wechatgw.handler.WeChatHandler),
-            #(r"/wechatToken$", wechatgw.handler.WeChatTokenGet),
-            #(r"/wechatToken/insert$", wechatgw.handler.WeChatTokenInsert),
-            #(r"/wechatToken/update$", wechatgw.handler.WeChatTokenUpdate),
-            #(r"/wechatToken/update$", wechatgw.handler.WeChatTokenDelete),
+            (r"/", basehandler.Mainhander),
+            #(r"/([^/]+)/apiwechat[^/]*$", wechatgw.basehandler.WeChatHandler),
+            (r'/oam/login$', oam.handler.LoginHandler)
+            #(r"/wechatToken$", wechatgw.basehandler.WeChatTokenGet),
+            #(r"/wechatToken/insert$", wechatgw.basehandler.WeChatTokenInsert),
+            #(r"/wechatToken/update$", wechatgw.basehandler.WeChatTokenUpdate),
+            #(r"/wechatToken/update$", wechatgw.basehandler.WeChatTokenDelete),
             #(r"/a/message/updates", MessageUpdatesHandler),
             ],
         cookie_secret="aESvdUvjh@#Fd7894*&gj)#zjJ!)(+}/`jX",

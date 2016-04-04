@@ -1,3 +1,4 @@
+#-*- coding:utf-8 -*-
 import tornado.web
 import globalsetting
 class BaseHandler(tornado.web.RequestHandler):
@@ -8,3 +9,7 @@ class BaseHandler(tornado.web.RequestHandler):
         k = dict(isLocalJS = globalsetting.gIfLocalJS)
         k.update(kwargs)
         tornado.web.RequestHandler.render(self, template_name, **k)
+        
+class Mainhander(BaseHandler):
+    def get(self):
+        self.render('adminbase.htm')
