@@ -1,0 +1,18 @@
+{% if isLocalJS %}
+<script src="{{ static_url('jquery-1.12.2.min.js') }}">
+s = '<script src="' + '{{ static_url("jquery-1.12.2.min.js") }}' + '"><\/script>'
+alert(s)
+
+</script>
+
+{% else %}
+<script src="http://cdn.bootcss.com/jquery/1.12.1/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="/static/jquery-1.12.2.min.js"><\/script>')
+if (!window.jQuery) {
+	s = '<script src="' + '{{static_url("jquery-1.12.2.min.js")}}' + '"><\/script>'
+	alert(s)
+	document.write(s)
+}
+</script>
+{% end %}

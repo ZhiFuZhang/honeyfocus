@@ -1,0 +1,9 @@
+{% if isLocalJS %}
+<!-- Bootstrap core CSS -->
+<link href="{{ static_url('bs.3.3.6/css/bootstrap.min.css') }}" rel="stylesheet">
+{% else %}
+<link href="http://cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+{% end %}
+<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+<link href="{{ static_url('bs.3.3.6/ie10-viewport-bug-workaround.css') }}" rel="stylesheet" >
+

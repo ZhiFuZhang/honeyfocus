@@ -3,7 +3,7 @@ import tornado.ioloop
 import tornado.web
 from tornado.options import define, options
 import os
-import wechatgw
+import wechatgw.handler
 import globalsetting
 
 define("debug", default=False, help="run in debug mode")
@@ -14,18 +14,19 @@ define("port", default=8888, help="run on the given port", type=int)
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
         #self.write(vars(self.request.headers))
-        self.render("adminbase.htm");
+        self.render("login.htm");
 def main():
     options.parse_command_line()
-    
+    d = options.debug
     #we only use 8888 when we coding the project
     if options.port == 8888:
-        globalsetting.gIfLocalJS = 1  
+        globalsetting.gIfLocalJS = 1
+        d = True
  
     app = tornado.web.Application(
         [
             (r"/", MainHandler),
-            #(r"/([^/]+)/apiwechat[^/]*$", wechatgw.handler.WeChatHandler),
+            (r"/([^/]+)/apiwechat[^/]*$", wechatgw.handler.WeChatHandler),
             #(r"/wechatToken$", wechatgw.handler.WeChatTokenGet),
             #(r"/wechatToken/insert$", wechatgw.handler.WeChatTokenInsert),
             #(r"/wechatToken/update$", wechatgw.handler.WeChatTokenUpdate),
@@ -37,7 +38,7 @@ def main():
         static_path=os.path.join(os.path.dirname(__file__), "static"),
         xsrf_cookies=True,
         xheaders = True,
-        debug=options.debug,
+        debug=d,
         )
     app.listen(options.port)
     tornado.ioloop.IOLoop.current().start()  

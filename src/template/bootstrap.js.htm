@@ -1,0 +1,8 @@
+{% if isLocalJS %}
+<script src="{{ static_url('bs.3.3.6/js/bootstrap.min.js') }}"></script>
+{% else %}
+<script src="http://cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+{% end %}
+<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+<script src="{{ static_url('bs.3.3.6/ie10-viewport-bug-workaround.js' }}"></script>
+

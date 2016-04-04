@@ -1,0 +1,6 @@
+{% if isLocalJS %}
+<!-- Bootstrap theme CSS -->
+<link href="{{ static_url('bs.3.3.6/css/bootstrap-theme.min.css') }}" rel="stylesheet">
+{% else %}
+<link href="http://cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" rel="stylesheet">
+{% end %}
