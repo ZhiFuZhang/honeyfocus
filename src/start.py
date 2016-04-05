@@ -4,9 +4,9 @@ import tornado.ioloop
 import tornado.web
 from tornado.options import define, options
 import os
-#import wechatgw.basehandler
+#import wechatgw.base
 import globalsetting
-import basehandler
+import base
 import oam.handler
 define("debug", default=False, help="run in debug mode")
 define("port", default=8888, help="run on the given port", type=int)
@@ -24,13 +24,13 @@ def main():
  
     app = tornado.web.Application(
         [
-            (r"/", basehandler.Mainhander),
-            #(r"/([^/]+)/apiwechat[^/]*$", wechatgw.basehandler.WeChatHandler),
+            (r"/", base.Mainhander),
+            #(r"/([^/]+)/apiwechat[^/]*$", wechatgw.base.WeChatHandler),
             (r'/oam/login$', oam.handler.LoginHandler)
-            #(r"/wechatToken$", wechatgw.basehandler.WeChatTokenGet),
-            #(r"/wechatToken/insert$", wechatgw.basehandler.WeChatTokenInsert),
-            #(r"/wechatToken/update$", wechatgw.basehandler.WeChatTokenUpdate),
-            #(r"/wechatToken/update$", wechatgw.basehandler.WeChatTokenDelete),
+            #(r"/wechatToken$", wechatgw.base.WeChatTokenGet),
+            #(r"/wechatToken/insert$", wechatgw.base.WeChatTokenInsert),
+            #(r"/wechatToken/update$", wechatgw.base.WeChatTokenUpdate),
+            #(r"/wechatToken/update$", wechatgw.base.WeChatTokenDelete),
             #(r"/a/message/updates", MessageUpdatesHandler),
             ],
         cookie_secret="aESvdUvjh@#Fd7894*&gj)#zjJ!)(+}/`jX",

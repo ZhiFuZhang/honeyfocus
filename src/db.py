@@ -1,39 +1,60 @@
-from sqlalchemy import Column, String, create_engine
-from sqlalchemy.orm import sessionmaker
+#-*- coding:utf-8 -*-
+from sqlalchemy import Column, String, create_engine, Integer, Text
+from sqlalchemy.orm import sessionmaker,deferred
 from sqlalchemy.ext.declarative import declarative_base
-#http://docs.sqlalchemy.org/en/rel_1_0/orm/tutorial.html
+from contextlib import contextmanager
 
-    
-    
-import sqlalchemy
-from sqlalchemy import create_engine
-print sqlalchemy.__version__ 
-engine = create_engine('sqlite:///:memory:', echo=True)
-#engine = create_engine('sqlite:///b.db', echo=True)
 
-from sqlalchemy.ext.declarative import declarative_base
+Session = sessionmaker()
 Base = declarative_base()
-from sqlalchemy import Column, Integer, String
-from sqlalchemy import Sequence
 
 class User(Base):
     __tablename__ = 'usertable'
-    id = Column(Integer, Sequence('user_id_seq'), primary_key=True)
-    name = Column(String(25), index = True, unique = True)
-    fullname = Column(String)
-    password = Column(String)
-    def __repr__(self):
-        return "<User(id='%d', name='%s', fullname='%s', password='%s')>" % (self.id, self.name, self.fullname, self.password)
+    uid = Column(Integer, primary_key = True)
+    username = Column(String(50), index = True, unique = True)
+    passwd = deferred(Column(String(64))) # passwd + salt, splited by ',', eg,  ABCD,EFG  ABCD is passwd, EFG is salt
+    createtime = Column(Integer)
+    logintime = Column(Integer, default = 0)
+    failtimes = (Column(Integer, default = 0))
+    power = Column(Integer, default = 0)
 
-#print  User.__table__
-Base.metadata.create_all(engine)  
-ed_user = User(name='ed', fullname='Ed Jones', password='edspassword')
-from sqlalchemy.orm import sessionmaker 
-Session = sessionmaker(bind=engine)
-session = Session()
-session.add(ed_user) 
-session.commit()
-our_user = session.query(User).filter_by(name='ed').first()
-print our_user
-our_user.fullname = '99999'
-session.commit()
+class WeChatData(Base):
+    __tablename__ = 'wechattable'
+    appid = Column(String(32), primary_key = True)
+    secret = deferred(Column(String(64)))
+    token = deferred(Column(String(64)))
+    access_token = deferred(Column(Text))
+    expires_time = Column(Integer)
+    iplist = deferred(Column(Text))
+
+class sysconfig(Base):
+    __tablename__ = "sysconfig"
+    id = Column(Integer, primary_key = True)
+    #if the rebootflag is changed , and then the webserver shall be exited
+    # And then it will be started by some monitor tools such as supervisor
+    rebootflag = Column(Integer, default=0) 
+    
+
+
+
+
+def init(dbdrive, isEcho=True):
+    engine = create_engine(dbdrive, echo=True)
+    Session.configure(bind=engine)
+    Base.metadata.create_all(engine)
+    
+
+@contextmanager
+def session_scope():
+    """Provide a transactional scope around a series of operations."""
+    session = Session()
+    try:
+        yield session
+        session.commit()
+    except:
+        session.rollback()
+        raise
+    finally:
+        session.close()
+    
+init('sqlite:///:memory:')
