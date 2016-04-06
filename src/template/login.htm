@@ -11,7 +11,13 @@
         <input type="email" id="inputEmail" name="{{ handler.FieldUserName }}" class="form-control" placeholder="电子邮箱" required autofocus>
         <label for="inputPassword" class="sr-only">密码</label>
         <input type="password" id="inputPassword" name="{{ handler.FieldPasswd }}" class="form-control" placeholder="密码 " required>
-        
+        {% if fail %}
+   
+         <h4>
+         <span class="label label-danger">用户名密码错误, 请重新输入</span>
+         </h4>
+     
+        {% end %}
         <button class="btn btn-lg btn-primary btn-block" type="submit">登录 </button>
  
       	{% module xsrf_form_html() %}

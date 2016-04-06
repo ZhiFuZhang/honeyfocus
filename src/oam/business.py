@@ -1,9 +1,11 @@
 #-*- coding:utf-8 -*-
-import base.BaseBusiness
+import base
 from db import *
 import time
-from random import randint
+
 class UserManage(base.BaseBusiness):
+    InitPower = 255
+    AdminPower = 254
     def login(self, uname, passwd):   
         u = self.session.query(User).filter(User.username == uname).one_or_none()
         if u:
@@ -47,15 +49,17 @@ class UserManage(base.BaseBusiness):
             t = int(time.time())
             u.passwd = passwd
             u.power = power
+            u.updatetime = t
             self.session.commit()
             return True
         else:
             return False
     
-    @staticmethod
-    def init_admin(session):
-        um = UserManage(session)
-        um.add('superstar@honeyfocus.com', 'superwechat', 255)
-    
+    def isInitPasswd(self, u):
+        return u.power == self.InitPower
 
-        
+    def init_admin(self):
+        uname = u'superstar@honeyfocus.com'
+        passwd = u'superwechat'
+        if not self.session.query(User).filter(User.username == uname).one_or_none():
+            self.add(uname, passwd, self.InitPower)

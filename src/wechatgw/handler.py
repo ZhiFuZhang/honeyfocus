@@ -1,13 +1,39 @@
 #-*- coding:utf-8 -*-
 import tornado.web
-
-
-
+import tornado
+import hashlib
+import base64
+import business
+from tornado import gen
+import time
+from tornado.httpclient import AsyncHTTPClient
+from db import session_scope
+import helper
 class WeChatHandler(tornado.web.RequestHandler):
-    def get(self, officalid):
-        pass
-    def post(self,officalid):
-        pass
+    def get(self):
+        ParamSignature = 'signature'
+        ParamTimestamp = 'timestamp'
+        ParamNonce     = 'nonce'
+        ParamEchostr = 'echostr'
+        sig = self.get_query_argument(ParamSignature, '')
+        t   = self.get_query_argument(ParamTimestamp, '')
+        nonce = self.get_query_argument(ParamNonce, '')
+        echostr = self.get_query_argument(ParamEchostr, '')
+        with session_scope() as session:
+            w = business.WeChatBusiness(session)
+            self.write(w.verify(sig, t, nonce, echostr))
+   
+   
+    def post(self):  
+        self.write('')
+        self.flush()
+        c = self.request.body
+        # the msg is too large.
+        if len(c) > 1024:
+            self.write_error('304')
+        #m = business.WeChatMsg(c)
+        #if not m.isValid():
+        #    self.write_error('304')
     
 class WeChatToken(tornado.web.RequestHandler):
     def initialize(self):

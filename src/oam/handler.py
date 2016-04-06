@@ -6,8 +6,10 @@ from db import session_scope
 from oam.business import UserManage
 from random import randint
 
+
 class OAMbase(base.BaseHandler):
-    pass  
+    _Cookie_UID = 'cuid'
+    pass
 
 #{% include *filename* %}
 class LoginHandler(OAMbase):
@@ -15,12 +17,11 @@ class LoginHandler(OAMbase):
     FieldPasswd = 'userpasswd'
     def get(self):
         self.title = u'登录 '
-        self.render('login.htm')
+        self.render('login.htm', fail = False)
         
     @tornado.web.asynchronous   
     @tornado.gen.coroutine
     def post(self):
-        self.write('')
         uname = self.get_argument(self.FieldUserName, '')
         passwd = self.get_argument(self.FieldPasswd, '')
         if not uname or not passwd:
@@ -30,16 +31,19 @@ class LoginHandler(OAMbase):
             um = UserManage(session)
             u = um.login(uname, passwd)
             if u:
-                pass
+                self.set_secure_cookie(self._Cookie_UID, unicode(u.uid))
+                self.redirect('/oam/manage')
             else:
-                pass
+                self.render('login.htm', fail = True)
                 
                 
-        
-            
-        
-        #yield tornado.gen.Task(tornado.ioloop.IOLoop.instance().add_timeout, time.time() + 5)
 
-
+class ManageHandle(OAMbase):
+    
+    def get(self):
+        pass
+    
+    def post(self):
+        pass
     
     

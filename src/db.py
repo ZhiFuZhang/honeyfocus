@@ -16,6 +16,7 @@ class User(Base):
     createtime = Column(Integer)
     logintime = Column(Integer, default = 0)
     failtimes = (Column(Integer, default = 0))
+    updatetime = Column(Integer, default = 0)
     power = Column(Integer, default = 0)
 
 class WeChatData(Base):
@@ -57,4 +58,3 @@ def session_scope():
     finally:
         session.close()
     
-init('sqlite:///:memory:')

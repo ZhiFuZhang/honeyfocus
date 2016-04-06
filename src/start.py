@@ -6,8 +6,11 @@ from tornado.options import define, options
 import os
 #import wechatgw.base
 import globalsetting
-import base
+import db
+import time
+#import base
 import oam.handler
+from db import session_scope
 define("debug", default=False, help="run in debug mode")
 define("port", default=8888, help="run on the given port", type=int)
 
@@ -17,15 +20,24 @@ define("port", default=8888, help="run on the given port", type=int)
 def main():
     options.parse_command_line()
     d = options.debug
+    e = False
     #we only use 8888 when we coding the project
     if options.port == 8888:
         globalsetting.gIfLocalJS = 1
         d = True
- 
+        e = True
+
+    db.init('sqlite:///' + os.path.join(os.path.dirname(__file__), "db/web.db"),
+             e)
+    with session_scope() as session:
+        um = oam.business.UserManage(session)
+        um.init_admin()
+        
     app = tornado.web.Application(
         [
-            (r"/", base.Mainhander),
+            #(r"/", base.Mainhander),
             #(r"/([^/]+)/apiwechat[^/]*$", wechatgw.base.WeChatHandler),
+            (r'/oam/login$', oam.handler.LoginHandler)
             (r'/oam/login$', oam.handler.LoginHandler)
             #(r"/wechatToken$", wechatgw.base.WeChatTokenGet),
             #(r"/wechatToken/insert$", wechatgw.base.WeChatTokenInsert),
@@ -40,6 +52,8 @@ def main():
         xheaders = True,
         debug=d,
         )
+    
+    time.sleep(7)
     app.listen(options.port)
     tornado.ioloop.IOLoop.current().start()  
 if __name__ == '__main__':
