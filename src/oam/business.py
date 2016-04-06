@@ -1,6 +1,6 @@
 #-*- coding:utf-8 -*-
 import base
-from db import *
+from db import User
 import time
 
 class UserManage(base.BaseBusiness):
