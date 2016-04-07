@@ -1,0 +1,133 @@
+{% extends "adminbase.htm" %}
+{% block csshead %}
+{% include "bootstrap.css.htm" %}
+ <link href="{{ static_url('admin.css') }}" rel="stylesheet">
+<style>
+.form-signin {
+  max-width: 330px;
+  padding: 15px;
+  margin: 0 auto;
+}
+</style>
+{% end %}
+
+{% block pagemenuoverview %}
+     <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
+{% end %}
+
+{% block menuoverview %}
+  <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
+{% end %}
+
+{% block adminmain %}
+
+	{% if firstlogin %}
+	
+	<div class="container">
+      <form class="form-signin" method="post">
+        <h2 class="form-signin-heading">请修改初始密码</h2>
+        <label for="inputPassword" class="sr-only">原密码</label>
+        <input type="password" id="inputPasswordold" name="{{ handler.FieldPasswd }}" class="form-control" placeholder="原密码 " required>
+ 		<div id="passtext" style="margin-top:10px" >密码强度:</div>
+		<div class="progress" id="passholder">
+		
+        <div id="passdiv" class="progress-bar progress-bar-success"  role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+        	<span class="sr-only" id="passlen"></span>
+        </div>  
+        </div>     
+        <label for="inputPassword" class="sr-only">新密码, 建议包含大小写字母数字特殊字符</label>
+        <input type="password" id="inputPassword" name="{{ handler.FieldNew }}" class="form-control" placeholder="新密码, 建议包含大小写字母数字特殊字符 " required>
+        <label for="inputPassword" class="sr-only">再输一次</label>
+        <input type="password" id="inputPasswordnew" name="{{ handler.FieldReinput }}" class="form-control" placeholder="再输一次 " required>
+        
+         <h4>
+         <span class="label label-danger" id="tips">{{ tips }}</span>
+         </h4>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">更新 </button>
+ 
+      	{% module xsrf_form_html() %}
+      </form>
+
+    </div>
+
+	{% else %}
+	<div class="container">
+	<h3>
+	<span>您上次登录时间为:</span>
+	     {% import time %}
+	     <span class="label label-warning">{{ time.strftime('%Y/%m/%d %H:%M:%S',time.localtime(current_user.logintime)) }}</span>
+	</h3>
+	<h4 style="margin-top:20px">
+	<span>请选择左侧菜单进行相应的操作</span>
+	
+	</h4>
+	</div>	
+	{% end %}
+
+
+{% end %}
+
+{% block jsfoot %}
+{% include jquery.htm %}
+{% include bootstrap.js.htm %}
+
+<script type="text/javascript">
+//<![CDATA[
+{% if firstlogin %}
+$("form").ready(function() {
+	$("#inputPasswordold").select();
+	$('#passholder').hide()
+	$('#passtext').hide()
+});
+$('#inputPassword').keyup(function(e) {
+	$('#passholder').show()
+    $('#passtext').show()
+	var strongRegex = new RegExp("^(?=.{8,})(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*\\W).*$", "g");
+    var mediumRegex = new RegExp("^(?=.{7,})(((?=.*[A-Z])(?=.*[a-z]))|((?=.*[A-Z])(?=.*[0-9]))|((?=.*[a-z])(?=.*[0-9]))).*$", "g");
+    var enoughRegex = new RegExp("(?=.{6,}).*", "g");
+    var w = $(this).val().length
+    if (false == enoughRegex.test($(this).val())) {
+            $('#passlen').html('More Characters');
+            w = w + 2
+            if (w>20) {   	
+            	w = 20
+            }
+    } else if (strongRegex.test($(this).val())) {
+    		w = w + 92
+    		if (w> 100){
+    			w = 100
+    		}
+    		$('#passlen').html('Strong!');
+    } else if (mediumRegex.test($(this).val())) {
+    		w = w + 60
+    		if (w>80) {
+    			w = 80
+    		}
+            $('#passlen').html('Medium!');
+    } else {
+    		w = w + 20
+    		if (w > 40) {
+    			w = 40
+    		}
+            $('#passlen').html('Weak!');
+    }
+    $('#passdiv').width(w.toString()+'%')
+    return true;
+});
+
+$("form").on("submit",function(){
+   if ($("#inputPassword").val() != $("#inputPasswordnew").val()) {
+		$('#tips').html('两个密码不一致， 请重新输入')
+		$("#inputPassword").val('')
+		$("#inputPasswordnew").val('')
+		$("#inputPassword").select()	   return false
+   }
+  return true;
+})
+
+{% end %}
+//]]>
+</script>
+
+
+{% end %}

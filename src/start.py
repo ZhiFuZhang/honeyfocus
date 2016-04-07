@@ -23,7 +23,7 @@ def main():
     e = False
     #we only use 8888 when we coding the project
     if options.port == 8888:
-        globalsetting.gIfLocalJS = 1
+        globalsetting.gIfLocalJS = True
         d = True
         e = True
 

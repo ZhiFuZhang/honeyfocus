@@ -69,12 +69,15 @@ class ManageHandle(OAMbase):
             um = UserManage(session)
             self.needUserInfo(session)
             firstlogin = um.isInitPasswd(self.current_user)
+            t = time.strftime('%Y/%m/%d %H:%M:%S',time.localtime(self.current_user.logintime))
+            s = self.get_secure_cookie(self._COOKIE_LoginTime, t)
             
-            self.render('adminhome.htm', firstlogin = firstlogin, tips = '')
+            self.render('adminhome.htm', firstlogin = firstlogin, tips = '', logintime = s)
             if not firstlogin:
-                t = time.strftime('%Y/%m/%d %H:%M:%S',time.localtime(self.current_user.logintime))
-                self.set_secure_cookie(self._COOKIE_LoginTime, t)
+                if s != t:
+                    self.set_secure_cookie(self._COOKIE_LoginTime, t)
                 self.current_user.logintime = int(time.time())
+                
 
     
     def post(self):

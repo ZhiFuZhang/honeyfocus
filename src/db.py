@@ -40,7 +40,7 @@ class sysconfig(Base):
 
 
 def init(dbdrive, isEcho=True):
-    engine = create_engine(dbdrive, echo=True)
+    engine = create_engine(dbdrive, echo=isEcho)
     Session.configure(bind=engine)
     Base.metadata.create_all(engine)
     
