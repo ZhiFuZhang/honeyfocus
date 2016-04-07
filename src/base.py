@@ -28,7 +28,6 @@ class BaseBusiness(object):
             salt = salt.encode('ascii')
         if isinstance(salt, unicode):
             msg = msg.encode('ascii')
-            
         h = hmac.new(salt, msg, hashlib.sha256)
         return base64.b64encode(h.digest())
     

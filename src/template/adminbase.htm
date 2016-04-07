@@ -1,34 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="icon" href="/static/favicon.ico">
-
-    <title>Starter Template for Bootstrap</title>
-
-    <!-- Bootstrap core CSS -->
-    <link href="/static/bs.3.3.6/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <link href="/static/bs.3.3.6/ie10-viewport-bug-workaround.css" rel="stylesheet">
- 
-    <link href="/static/admin.css" rel="stylesheet">
-
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-
-  </head>
-
-  <body>
-
+{% extends "base.htm" %}
+{% block csshead %}
+{% include "bootstrap.css.htm" %}
+ <link href="{{ static_url('login.css') }}" rel="stylesheet">
+{% end %}
+{% block body %}
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
@@ -50,44 +25,38 @@
       </div>
     </nav>
 
-    <div class="container-fluid">
+ <div class="container-fluid">
  	 <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
-            <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
-            <li><a href="#">Reports</a></li>
-            <li><a href="#">Analytics</a></li>
-            <li><a href="#">Export</a></li>
+           {% block pagemenuoverview %}
+            <li ><a href="/oam/manage">欢迎 </a></li>
+          {% end %}
+          {% block pageusermanage %}
+            <li><a href="/oam/user">用户管理</a></li>
+           {% end %}
+           {% block pagewechatsetting %}
+            <li><a href="/oam/wechat">微信设置</a></li>
+           {% end %}
+           
+           {% block pageglobalsetting %}
+            <li><a href="/oam/setting">其它全局设置</a></li>
+           {% end %}
           </ul>
-          <ul class="nav nav-sidebar">
-            <li><a href="">Nav item</a></li>
-            <li><a href="">Nav item again</a></li>
-            <li><a href="">One more nav</a></li>
-            <li><a href="">Another nav item</a></li>
-            <li><a href="">More navigation</a></li>
-          </ul>
-          <ul class="nav nav-sidebar">
-            <li><a href="">Nav item again</a></li>
-            <li><a href="">One more nav</a></li>
-            <li><a href="">Another nav item</a></li>
-          </ul>
+          
         </div>
+ 	 	<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+     	{% block adminmain %}
+     	
+     	{% end %}
+     	</div>
  	 </div>
  	 
- 	 </div>
-     <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-     
-     </div>
+</div>
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="http://cdn.bootcss.com/jquery/1.12.1/jquery.min.js"></script>
-    <script>window.jQuery || document.write('<script src="/static/jquery-1.12.2.min.js"><\/script>')</script>
-  
-   <!-- http://cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js -->
-    <script src="/static/bs.3.3.6/js/bootstrap.min.js"></script>
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="/static/bs.3.3.6/ie10-viewport-bug-workaround.js"></script>
-  </body>
-</html>
+{% end %}
+ 
+{% block jsfoot %}
+{% include jquery.htm %}
+{% include bootstrap.js.htm %}
+{% end %}

@@ -35,10 +35,10 @@ def main():
         
     app = tornado.web.Application(
         [
-            #(r"/", base.Mainhander),
+            (r"/", oam.handler.LoginHandler),
             #(r"/([^/]+)/apiwechat[^/]*$", wechatgw.base.WeChatHandler),
             (r'/oam/login$', oam.handler.LoginHandler),
-            (r'/oam/manage$', oam.handler.LoginHandler),
+            (r'/oam/manage$', oam.handler.ManageHandle),
             #(r"/wechatToken$", wechatgw.base.WeChatTokenGet),
             #(r"/wechatToken/insert$", wechatgw.base.WeChatTokenInsert),
             #(r"/wechatToken/update$", wechatgw.base.WeChatTokenUpdate),
