@@ -12,12 +12,9 @@
 {% end %}
 
 {% block pagemenuoverview %}
-     <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
+     <li class="active"><a href="#">欢迎 <span class="sr-only">(current)</span></a></li>
 {% end %}
 
-{% block menuoverview %}
-  <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
-{% end %}
 
 {% block adminmain %}
 
@@ -54,8 +51,7 @@
 	<div class="container">
 	<h3>
 	<span>您上次登录时间为:</span>
-	     {% import time %}
-	     <span class="label label-warning">{{ time.strftime('%Y/%m/%d %H:%M:%S',time.localtime(current_user.logintime)) }}</span>
+	     <span class="label label-warning">{{ logintime }}</span>
 	</h3>
 	<h4 style="margin-top:20px">
 	<span>请选择左侧菜单进行相应的操作</span>

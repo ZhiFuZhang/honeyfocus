@@ -1,0 +1,22 @@
+{% extends "adminbase.htm" %}
+{% block csshead %}
+{% include "bootstrap.css.htm" %}
+ <link href="{{ static_url('admin.css') }}" rel="stylesheet">
+<style>
+.form-signin {
+  max-width: 330px;
+  padding: 15px;
+  margin: 0 auto;
+}
+</style>
+{% end %}
+
+
+{% block pagewechatsetting %}
+    <li class="active"><a href="/oam/wechat">微信设置 <span class="sr-only">(current)</span></a></li>
+{% end %}
+
+{% block adminmain %}
+	
+{% end %}
+

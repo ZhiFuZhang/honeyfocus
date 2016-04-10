@@ -5,9 +5,20 @@ import os
 import base64
 import hashlib
 import hmac
+from db import Session
+from helper import web_log
 class BaseHandler(tornado.web.RequestHandler):
-    def initialize(self):
+    def prepare(self):
         self.title = u'无 标题'
+        self.session = Session()
+        web_log.debug('after prepare')
+    
+    def on_finish(self):
+        self.session.commit()
+        self.session.close()
+        del self.session
+        web_log.debug('after on finish')
+
     
     def render(self, template_name, **kwargs):
         k = dict(isLocalJS = globalsetting.gIfLocalJS)

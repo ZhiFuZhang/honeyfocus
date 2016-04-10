@@ -1,0 +1,43 @@
+{% extends "adminwechat.htm" %}
+{% block adminmain %}
+
+<div class="container">
+      <form class="form-signin" method="post">
+        <h2 class="form-signin-heading">请配置wechat数据</h2>
+        {% if data %}
+        <label for="input1" class="sr-only">appid</label>
+         <span class="label label-info">appid:</span>
+        <input type="text" id="input1"  name="{{ handler.FieldAppId }}" value="{{ data.appid }}" class="form-control" placeholder="appid " required>
+        
+        <label for="input2" class="sr-only">secret</label>
+        <span class="label label-info" >secret:</span>
+        <input type="text" id="input2" name="{{ handler.FieldSecret }}" value="{{ data.secret }}" class="form-control" placeholder="secret" required>
+        <label for="input3" class="sr-only">token</label>
+        <span class="label label-info" >token:</span>
+        <input type="text" id="input3" name="{{ handler.FieldToken }}" value="{{ data.token }}" class="form-control" placeholder="token " required>
+        
+        {% else %}
+        
+        <label for="input1" class="sr-only">appid</label>
+         <span class="label label-info" >appid:</span>
+        <input type="text" id="input1"  name="{{ handler.FieldAppId }}" class="form-control" placeholder="appid " required>
+        
+        <label for="input2" class="sr-only">secret</label>
+        <span class="label label-info" >secret:</span>
+        <input type="text" id="input2" name="{{ handler.FieldSecret }}" class="form-control" placeholder="secret" required>
+        <label for="input3" class="sr-only">token</label>
+        <span class="label label-info" >token:</span>
+        <input type="text" id="input3" name="{{ handler.FieldToken }}" class="form-control" placeholder="token " required>
+        
+        {% end %}
+         <h4>
+         <span class="label label-danger" id="tips">{{ tips }}</span>
+         </h4>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">设置</button>
+ 
+      	{% module xsrf_form_html() %}
+      </form>
+
+    </div>
+    
+   {% end %}

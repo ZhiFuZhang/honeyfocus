@@ -1,6 +1,6 @@
 #-*- coding:utf-8 -*-
 import base
-from db import User
+from db import User, WeChatData
 import time
 
 class UserManage(base.BaseBusiness):
@@ -11,6 +11,9 @@ class UserManage(base.BaseBusiness):
     @staticmethod
     def sep_passwd_salt(passwd):
         return passwd.split(',')
+    
+    #success, update failtimes to 0
+    # fail, update logintime, failtimes++
     def login(self, uname, passwd):
         u = self.session.query(User).filter(User.username == uname).one_or_none()
         if u:
@@ -82,3 +85,20 @@ class UserManage(base.BaseBusiness):
         passwd = u'superwechat'
         if not self.session.query(User).filter(User.username == uname).one_or_none():
             self.add(uname, passwd, 255)
+
+
+
+class WeChatConf(base.BaseBusiness):
+    def query(self):
+        return self.session.query(WeChatData).one_or_none()
+    
+    def update(self, appid, secret, token):
+        data = self.query()
+        if data:
+            data.appid = appid
+            data.secret = secret
+            data.token = token
+        else:
+            data = WeChatData(appid = appid, secret= secret, token = token)
+            self.session.add(data)
+        return data

@@ -1,0 +1,31 @@
+{% extends "adminwechat.htm" %}
+{% block adminmain %}
+
+<div class="container">
+
+	 <h2 class="form-signin-heading">wechat配置数据如 下</h2>
+       <h5>
+         <span class="label label-success" id="tips">{{ tips }}</span>
+         </h5>
+ <h4>
+ <span class="label label-primary">微信 公众平台URL:</span>
+<span  class="label label-default">{{handler.request.protocol}}://{{handler.request.host}}/apiwechat</span>
+ </h4>
+ <h4>
+ <span class="label label-primary">微信 公众平台appid:</span>
+<span  class="label label-default">{{data.appid }}</span>
+   </h4>
+ <h4>    
+      
+<span class="label label-primary">微信 公众平台secret:</span>
+<span class="label label-default">{{data.secret }}</span>
+      
+ </h4>
+ <h4>  
+<span class="label label-primary">微信 公众平台token:</span>
+<span  class="label label-default">{{data.token }}</span>
+        
+  </h4>
+    </div>
+   
+{% end %}

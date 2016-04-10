@@ -6,6 +6,7 @@ import db
 import base64
 from xml.etree.ElementTree import XML
 import datetime
+from helper import web_log
 
 class WeChatBusiness(base.BaseBusiness):
     
@@ -14,17 +15,26 @@ class WeChatBusiness(base.BaseBusiness):
             return ''
         
         data = self.session.query(db.WeChatData).one_or_none()
+        if not data:
+            web_log.info('wechatapi: verify fail, db is not configured')
+            return ''
         token = data.token
         arr = [token, ts, nonce]
         arr.sort()
         r = hashlib.sha1(''.join(arr))
         h = r.hexdigest()
-        b = base64.encode(r.digst())
+        b = base64.b64encode(r.digest())
         # the sig maybe a hex string or a base64 string.
         #either is supported
         if h == sig or b == sig:
+            web_log.info('wechatapi: verify success')
             return echostr
         else:
+            web_log.info('remote sig:' + sig)
+            web_log.info('local sig:' + h)
+            web_log.info('local sig:' + b)
+
+            web_log.info('wechatapi: verify fail')
             return ''
  
  
