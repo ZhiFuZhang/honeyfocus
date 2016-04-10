@@ -24,13 +24,13 @@ define('master', default=False, help='run as masster node')
 def main():
     options.parse_command_line()
     d = options.debug
-    e = True
+    e = False
     #we only use 8888 when we coding the project
     if options.port == 8888:
         globalsetting.gIfLocalJS = True
         d = True
         e = True
-        
+
     db.init('sqlite:///' + os.path.join(os.path.dirname(__file__), "db/web.db"),
              e)
     
