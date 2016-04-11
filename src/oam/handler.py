@@ -116,3 +116,9 @@ class WeChatConfigHandle(OAMbase):
         data = s.update(appid, secret, token)
         
         self.render('adminwechat_view.htm', data = data, tips=u'设置成功')  
+
+
+class WeChatPnp(OAMbase):
+    
+    def get(self):
+        self.render('adminwechatpnp.htm')

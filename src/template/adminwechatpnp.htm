@@ -1,0 +1,68 @@
+{% extends "adminbase.htm" %}
+{% block csshead %}
+{% include "bootstrap.css.htm" %}
+ <link href="{{ static_url('admin.css') }}" rel="stylesheet">
+<style>
+.form-signin {
+  max-width: 330px;
+  padding: 15px;
+  margin: 0 auto;
+}
+</style>
+{% end %}
+
+
+ {% block pagemenuwechatpnp %}
+       <li ><a class="active" href="/oam/wechatpnp">微信平台接入测试 桩 <span class="sr-only">(current)</span> </a></li>
+ {% end %}
+
+{% block adminmain %}
+
+<div class="container">
+      <form class="form-signin" >
+        <h2 class="form-signin-heading">设置接入数据， </h2>
+        <label for="input1" class="sr-only">signature</label>
+         <span class="label label-info" >signature:</span>
+        <input type="text" id="input1"  class="form-control" placeholder="signature " required>
+        
+        <label for="input2" class="sr-only">timestamp</label>
+        <span class="label label-info" >timestamp:</span>
+        <input type="text" id="input2"  class="form-control" placeholder="timestamp" required>
+
+        <label for="input3" class="sr-only">token</label>
+        <span class="label label-info" >token:</span>
+        <input type="text" id="input3" class="form-control" placeholder="token " required>
+        
+        <label for="input4" class="sr-only">echostr</label>
+        <span class="label label-info" >echostr:</span>
+        <input type="text" id="input4" class="form-control" placeholder="echostr" required>
+        
+        <button class="btn btn-lg btn-primary btn-block" type="button" id="sbutton">测试</button>
+      </form>
+
+    </div>
+{% end %}
+
+{% block jsfoot %}
+
+{% include jquery.htm %}
+
+{% include bootstrap.js.htm %}
+<script type="text/javascript">
+//<![CDATA[
+$("form").ready(function() {
+	$("#input1").select();
+});
+
+$("#sbutton").on("click",function(){
+
+	  jQuery.get("/apiwechat",{signature:'signature',timestamp:'timestamp', nonce:'nonce', echostr:'echostr'},	 function(data){
+			alert('data:' + data);  
+	   });
+
+})
+
+//]]>
+</script>
+
+{% end %}

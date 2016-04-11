@@ -54,7 +54,8 @@ def main():
             (r"/apiwechat[^/]*$", wechatgw.handler.WeChatHandler),
             (r'/oam/login$', oam.handler.LoginHandler),
             (r'/oam/manage$', oam.handler.ManageHandle),
-            (r'/oam/wechat$', oam.handler.WeChatConfigHandle)
+            (r'/oam/wechat$', oam.handler.WeChatConfigHandle),
+            (r'/oam/wechatpnp$', oam.handler.WeChatPnp),
             #(r"/wechatToken$", wechatgw.base.WeChatTokenGet),
             #(r"/wechatToken/insert$", wechatgw.base.WeChatTokenInsert),
             #(r"/wechatToken/update$", wechatgw.base.WeChatTokenUpdate),

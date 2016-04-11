@@ -7,17 +7,30 @@ import hashlib
 import hmac
 from db import Session
 from helper import web_log
+
 class BaseHandler(tornado.web.RequestHandler):
     def prepare(self):
         self.title = u'无 标题'
         self.session = Session()
-        web_log.debug('after prepare')
+        self.session_finished = False
+        web_log.debug('create session')
     
+    # for insert case,  it is better to commit the session in get/post method.
+    def finish(self, chunk=None):
+        if hasattr(self, 'session'):
+            try:
+                web_log.debug('commit session')
+                self.session.commit()
+            except Exception as e:
+                web_log.debug('rollback session')
+                self.session.rollback()
+                web_log.error(e.orig)
+        super(BaseHandler, self).finish(chunk)
+        
     def on_finish(self):
-        self.session.commit()
+        web_log.debug('close session')
         self.session.close()
         del self.session
-        web_log.debug('after on finish')
 
     
     def render(self, template_name, **kwargs):
