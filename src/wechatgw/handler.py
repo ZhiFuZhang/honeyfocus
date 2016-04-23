@@ -23,7 +23,6 @@ class WeChatHandler(tornado.web.RequestHandler):
             w = business.WeChatBusiness(session)
             self.write(w.verify(sig, t, nonce, echostr))
    
-   
     def post(self):  
         self.write('')
         self.flush()
@@ -31,9 +30,14 @@ class WeChatHandler(tornado.web.RequestHandler):
         # the msg is too large.
         if len(c) > 1024:
             self.write_error('304')
-        #m = business.WeChatMsg(c)
-        #if not m.isValid():
-        #    self.write_error('304')
+            return
+        with session_scope() as session:
+            m = business.WeChatMsg(session, c)
+            rsp = m.process()
+            self.write(rsp)
+    def check_xsrf_cookie(self):
+        #override the default handling, and do nothing for xsrf here
+        pass
     
 class WeChatToken(tornado.web.RequestHandler):
     def initialize(self):

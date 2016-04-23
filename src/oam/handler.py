@@ -27,25 +27,31 @@ class OAMbase(base.BaseHandler):
 class LoginHandler(OAMbase):
     FieldUserName = 'username'
     FieldPasswd = 'userpasswd'
-    def get(self):
+    def _get(self):
         self.title = u'登录 '
+        self.clear_cookie(self._Cookie_UID)
         self.clear_cookie(self._COOKIE_LoginTime)
         self.render('login.htm', fail = False)
         
     @tornado.gen.coroutine
-    def post(self):
+    def _post(self):
         uname = self.get_argument(self.FieldUserName, '')
         passwd = self.get_argument(self.FieldPasswd, '')
+        nexturl = self.get_query_argument('next', '/oam/manage')
         if not uname or not passwd:
-            pass
+            self.title = u'重新登录 '
+            self.render('login.htm', fail = True)
+            return
+            
         #sleep for 1.5 ~ 2.5 seconds, to avoid time attack
         yield tornado.gen.sleep(randint(150,250)/100.0)
-  
         um = UserManage(self.session)
         u = um.login(uname, passwd)
         if u:
             self.set_secure_cookie(self._Cookie_UID, unicode(u.uid))
-            self.redirect('/oam/manage')
+            
+            self.redirect(nexturl)
+            
         else:
             self.title = u'重新登录 '
             self.render('login.htm', fail = True)
@@ -58,7 +64,7 @@ class ManageHandle(OAMbase):
     FieldReinput = 'reinputpasswd'
     
     @tornado.web.authenticated
-    def get(self):
+    def _get(self):
         self.title = ''
 
         if not current_user:
@@ -81,7 +87,7 @@ class ManageHandle(OAMbase):
         self.render('adminhome.htm', firstlogin = firstlogin, tips = '', logintime = s)    
 
     @tornado.web.authenticated
-    def post(self):
+    def _post(self):
         passwd = self.get_argument(self.FieldPasswd, '')
         np = self.get_argument(self.FieldNew, '')
         rp = self.get_argument(self.FieldReinput, '')
@@ -100,12 +106,14 @@ class WeChatConfigHandle(OAMbase):
     FieldAppId = 'wechatappid'
     FieldSecret = 'wechatsecret'
     FieldToken = 'wechattoken'
-    def get(self):
+    
+    @tornado.web.authenticated
+    def _get(self):
         s = business.WeChatConf(self.session)
         wechatdata = s.query()
         self.render('adminwechat_update.htm', data= wechatdata, tips='')
 
-    def post(self):
+    def _post(self):
         appid = self.get_argument(self.FieldAppId)
         secret = self.get_argument(self.FieldSecret)
         token = self.get_argument(self.FieldToken)
@@ -118,7 +126,10 @@ class WeChatConfigHandle(OAMbase):
         self.render('adminwechat_view.htm', data = data, tips=u'设置成功')  
 
 
+
+
+#no need remove later
 class WeChatPnp(OAMbase):
     
-    def get(self):
+    def _get(self):
         self.render('adminwechatpnp.htm')

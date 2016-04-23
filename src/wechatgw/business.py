@@ -7,6 +7,11 @@ import base64
 from xml.etree.ElementTree import XML
 import datetime
 from helper import web_log
+import time
+import pickle
+
+from db import session_scope, UserSession
+from wechatgw.menufeature import rootFeature
 
 class WeChatBusiness(base.BaseBusiness):
     
@@ -41,7 +46,7 @@ class WeChatBusiness(base.BaseBusiness):
 class WeChatMsg(base.BaseBusiness):
     def __init__(self,session, msg):
         super(WeChatMsg, self).__init__(session)
-        d = XML(msg)
+        d = XML(unicode(msg).encode('utf-8'))
         # do not check whether it is resent.
         class Data(object):
             pass
@@ -61,7 +66,11 @@ class WeChatMsg(base.BaseBusiness):
         event = ['Event']
         for x in common:
             if not hasattr(self.data, x):
-                return None
+                if not hasattr(self, 'ToUserName'):
+                    self.data.ToUserName = 'not set'
+                if not hasattr(self, 'FromUserName'):
+                    self.data.FromUserName = 'not set'
+                return self.invalidFormatHandle()
         func = self.defaultHandle
         special = content
         if self.data.MsgType == 'text':
@@ -94,11 +103,10 @@ class WeChatMsg(base.BaseBusiness):
             elif self.data.Event == 'VIEW':
                 special.extend(['EventKey'])
         else:
-            return None
+            return self.invalidFormatHandle()
         for x in special:
             if not hasattr(self.data, x):
-                return None
-        
+                return self.invalidFormatHandle()
         return func()
     
     
@@ -112,14 +120,50 @@ class WeChatMsg(base.BaseBusiness):
         </xml>        
     '''
    
+    def invalidFormatHandle(self):
+        t = int(time.time())
+        c= u'系统故障'
+        return self.xmlstr.format(toUser = self.data.FromUserName, fromUser = self.data.ToUserName, t = t, content= c)
+       
     def defaultHandle(self):
         t = datetime.datetime.now()
-        c= u'功能尚在完善中， 敬请关注'
+        c= u'该功能暂不支持'
         return self.xmlstr.format(toUser = self.data.FromUserName, fromUser = self.data.ToUserName, t = t, content= c)
+    
+    def _textHandle(self):
+        t = int(time.time())
+        c= u'功能尚在完善中， 敬请关注'
+        session = self.session
+        u = session.query(UserSession).filter(UserSession.openid == self.data.FromUserName).one_or_none()
+        if u:
+            m = pickle.loads(u.sessionstr)
+            objectid = 0
+            if m.has_key('menuid'):
+                obj = rootFeature.getFfeature(m['menuid'])
+                if not obj:
+                    c = u'系统错误， 系统将调整至根目录\n' + rootFeature.help()
+                    objectid = rootFeature.objectid
+                else:
+                    objectid, c = obj.execute(self.data.FromUserName, self.data.Content)
+                    
+            else:
+                objectid, c = rootFeature.execute(self.data.FromUserName, self.data.Content)
+            m['menuid'] = objectid
+            u.sessionstr = pickle.dumps(m)
+            u.refreshtime = t
+        else:
+            objectid, c = rootFeature.execute(self.data.FromUserName, self.data.Content)
+            m = dict(menuid = objectid)
+            u = UserSession()
+            u.openid = self.data.FromUserName
+            u.createtime = t
+            u.refreshtime = t
+            u.sessionstr = pickle.dumps(m)
+            session.add(u)
+        return dict(toUser = self.data.FromUserName, fromUser = self.data.ToUserName, t = t, content= c)
     def textHandle(self):
-        t = datetime.datetime.now()
-        c= u'功能尚在完善中， 敬请关注'
-        return self.xmlstr.format(toUser = self.data.FromUserName, fromUser = self.data.ToUserName, t = t, content= c)
+        d = self._textHandle()
+        return self.xmlstr.format(**d)
     
     def locationHandle(self):
         pass
@@ -129,4 +173,7 @@ class WeChatMsg(base.BaseBusiness):
         c= u'谢谢关注, 当前仅支持文本消息功能'
         return self.xmlstr.format(toUser = self.data.FromUserName, fromUser = self.data.ToUserName, t = t, content= c)
     
+
+
+            
 

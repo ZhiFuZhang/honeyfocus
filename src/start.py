@@ -12,36 +12,34 @@ import time
 import oam.handler
 from db import session_scope
 import service
+from helper import web_log
 
 define("debug", default=False, help="run in debug mode")
 define("port", default=8888, help="run on the given port", type=int)
 
-#master node means, it provides more functions, such as fetching access_token from wechat
-define('master', default=False, help='run as masster node')
 # bootstrap http://www.runoob.com/bootstrap/bootstrap-environment-setup.html
 
 
 def main():
     options.parse_command_line()
-    d = options.debug
     e = False
     #we only use 8888 when we coding the project
     if options.port == 8888:
+        options.debug = True
+        web_log.setLevel('DEBUG')
         globalsetting.gIfLocalJS = True
-        d = True
-        e = True
-
+        #e = True
+    d = options.debug
     db.init('sqlite:///' + os.path.join(os.path.dirname(__file__), "db/web.db"),
              e)
     
-    lock = None
-    if options.master:
-        lock = service.Master()
-        # fail to lock, means, the master node is started, set the master to false
-        if not lock.lock():
-            options.master = False
-    
-    
+    master = service.Master()
+    node = master.start()
+    if node:
+        print 'this is a master node'
+    else:
+        print 'this is a slave node'
+        
     with session_scope() as session:
         um = oam.business.UserManage(session)
         um.init_admin()
@@ -72,8 +70,9 @@ def main():
     
     time.sleep(7)
     app.listen(options.port, '127.0.0.1')
+    web_log.debug('start listening port:%d'%options.port)
     tornado.ioloop.IOLoop.current().start()
-    if lock:
-        lock.release()
+    master.release()
+    
 if __name__ == '__main__':
     main();
