@@ -16,7 +16,10 @@ except ImportError:
         except ImportError:
             # only for test on windows
             class fcntl(object):
-                def flock(self, *args, **kargs):
+                LOCK_EX = 0
+                LOCK_NB = 1
+                @classmethod
+                def flock(*args, **kargs):
                     pass
     else:
         raise
@@ -32,7 +35,7 @@ class Master(object):
             #regular service is added before lock
             # check whether need reboot every 5 minutes
             self.addService('rebootservice', RebootService.run, 5 * 60)
-            fcntl.flock(self.pidfile, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            fcntl.flock(self.pid, fcntl.LOCK_EX | fcntl.LOCK_NB)
             self.master = True
             #master service is added after lock
             self.addService('access token service', AccessTokenService.run, 4 * 60 + 45)
@@ -53,7 +56,7 @@ class Master(object):
         if (self.servicelist.has_key(name)):
             return False
         else:
-            self.servicelist[name] = tornado.ioloop.IOLoop.instance().PeriodicCallback(callback, seconds * 1000 * 1000)
+            self.servicelist[name] = tornado.ioloop.PeriodicCallback(callback, seconds * 1000 * 1000)
             self.servicelist[name].start()
             return True
     def removeService(self, name):
