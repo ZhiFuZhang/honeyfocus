@@ -46,7 +46,9 @@ class WeChatBusiness(base.BaseBusiness):
 class WeChatMsg(base.BaseBusiness):
     def __init__(self,session, msg):
         super(WeChatMsg, self).__init__(session)
-        d = XML(unicode(msg).encode('utf-8'))
+        if isinstance(msg, unicode):
+            msg = msg.encode('utf-8')
+        d = XML(msg)
         # do not check whether it is resent.
         class Data(object):
             pass

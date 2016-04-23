@@ -321,11 +321,14 @@ class BookMarkAddTest(testbase.BaseTestCase):
         self.assertEqual(self.obj.name, BookMarkFeature.AddAction.Name, 'msg:'+ self.obj.name)
 
     def test_normal(self):
-        content = 'addtest'
+        content = u'非常好'
         objectid, msg = self.obj.execute(self.openid, content)    
         self.assertEqual(objectid, self.obj.objectid)
-   
-                  
+        bid = msg.split('#')[1]
+        with session_scope()as session:
+            d = session.query(BookMark).filter(BookMark.id == bid).one_or_none()
+            self.assertNotEqual(None, d)
+            self.assertEqual(content, d.content, d.content)              
 #VersionFeature only have one layer, no test here
 #class VersionFeatureTest
 

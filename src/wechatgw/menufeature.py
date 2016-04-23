@@ -145,7 +145,7 @@ class BookMarkFeature(BaseFeature):
         PageNum = 7
         def __init__(self, parent, root):
             super(BookMarkFeature.SearchAction, self).__init__(self.Name, parent, root)
-            self.tips = u'请输入想收藏的内容'
+            self.tips = u'请输入搜索关键字'
         
         def _saveArgs(self,session,openid, page, querystr):
             u = session.query(UserSession).filter(UserSession.openid == openid).one_or_none()
@@ -275,12 +275,12 @@ class BookMarkFeature(BaseFeature):
             if strip(content) == '9':
                 with session_scope() as session:
                     session.query(db.BookMark).filter(db.BookMark.openid == openid).delete(synchronize_session = False)
-                ret = u'清楚完成'
+                ret = u'清除 完成'
                 return (self.parent.objectid, ret)
             else:
-                return (self.parent.objectid, self.parent.helo())
+                return (self.parent.objectid, self.parent.help())
             
-            return (self.parent.objectid, self.parent.helo())
+            return (self.parent.objectid, self.parent.help())
 
 
 rootFeature = RootFeature()
