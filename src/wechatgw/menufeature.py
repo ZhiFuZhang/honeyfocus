@@ -133,7 +133,7 @@ class BookMarkFeature(BaseFeature):
             content = strip(content)
             ret = u''
             with session_scope() as session:
-                a = db.BookMark(content=content)
+                a = db.BookMark(openid = openid, content=content)
                 session.add(a)
                 session.commit()
                 ret = u'添加成功, 标示为:#'+ str(a.id)

@@ -328,7 +328,8 @@ class BookMarkAddTest(testbase.BaseTestCase):
         with session_scope()as session:
             d = session.query(BookMark).filter(BookMark.id == bid).one_or_none()
             self.assertNotEqual(None, d)
-            self.assertEqual(content, d.content, d.content)              
+            self.assertEqual(content, d.content, d.content)
+            self.assertEqual(self.openid, d.openid, d.openid)              
 #VersionFeature only have one layer, no test here
 #class VersionFeatureTest
 
