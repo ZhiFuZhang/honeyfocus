@@ -56,7 +56,7 @@ class Master(object):
         if (self.servicelist.has_key(name)):
             return False
         else:
-            self.servicelist[name] = tornado.ioloop.PeriodicCallback(callback, seconds * 1000 * 1000)
+            self.servicelist[name] = tornado.ioloop.PeriodicCallback(callback, seconds * 1000)
             self.servicelist[name].start()
             return True
     def removeService(self, name):
